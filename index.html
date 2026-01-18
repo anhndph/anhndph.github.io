@@ -143,8 +143,8 @@
             <input 
                 type="text" 
                 id="qrTextInput" 
-                placeholder="Ví dụ: 1Z252BM000923365"
-                value="1Z252BM000923365"
+                placeholder="Ví dụ: 1252AN000988044"
+                value="1252AN000988044"
             >
         </div>
 
@@ -153,7 +153,7 @@
             <input 
                 type="number" 
                 id="qrSize" 
-                value="200" 
+                value="256" 
                 min="128" 
                 max="400"
             >
@@ -238,7 +238,7 @@
             
             // Vẽ text bên dưới (to hơn)
             ctx.fillStyle = '#000000';
-            ctx.font = 'bold 21px Courier New, monospace';
+            ctx.font = '31px sans-serif';
             ctx.textAlign = 'center';
             ctx.fillText(text, totalWidth / 2, qrSize + padding + 30);
             
