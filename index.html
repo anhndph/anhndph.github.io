@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .qr-result {
+            margin-top: 30px;
+            text-align: center;
+            display: none;
+        }
+
+        .qr-result.show {
+            display: block;
+        }
+
+        .qr-wrapper {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            display: inline-block;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            border: 2px solid #e0e0e0;
+        }
+
+        #qrcode {
+            background: white;
+            display: inline-block;
+        }
+
+        .qr-code-number {
+            margin-top: 8px;
+            padding: 8px 12px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            font-weight: bold;
+            color: #000;
+            letter-spacing: 0.5px;
+            text-align: center;
+        }
+
+        .download-btn {
+            margin-top: 20px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .info-text {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔲 QR Code Generator</h1>
+        
+        <div class="input-group">
+            <label for="qrTextInput">Nhập nội dung (text, URL, số...):</label>
+            <input 
+                type="text" 
+                id="qrTextInput" 
+                placeholder="Ví dụ: 1Z252BM000923365"
+                value="1Z252BM000923365"
+            >
+        </div>
+
+        <div class="input-group">
+            <label for="qrSize">Kích thước (px):</label>
+            <input 
+                type="number" 
+                id="qrSize" 
+                value="200" 
+                min="128" 
+                max="400"
+            >
+        </div>
+
+        <button onclick="generateQR()">Tạo mã QR</button>
+
+        <div class="qr-result" id="qrResult">
+            <div class="qr-wrapper">
+                <div id="qrcode"></div>
+                <div class="qr-code-number" id="qrTextDisplay">1Z252BM000923365</div>
+            </div>
+            <button class="download-btn" onclick="downloadQR()">Tải xuống QR Code</button>
+            <p class="info-text">Mã QR đã được tạo thành công!</p>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script>
+        let qrcode = null;
+
+        function generateQR() {
+            const text = document.getElementById('qrTextInput').value;
+            const size = parseInt(document.getElementById('qrSize').value);
+            const qrcodeDiv = document.getElementById('qrcode');
+            const qrTextDisplay = document.getElementById('qrTextDisplay');
+            const resultDiv = document.getElementById('qrResult');
+
+            if (!text) {
+                alert('Vui lòng nhập nội dung để tạo mã QR!');
+                return;
+            }
+
+            // Xóa QR code cũ nếu có
+            qrcodeDiv.innerHTML = '';
+
+            // Tạo QR code mới
+            qrcode = new QRCode(qrcodeDiv, {
+                text: text,
+                width: size,
+                height: size,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+
+            // Hiển thị text bên dưới QR code
+            qrTextDisplay.textContent = text;
+
+            // Hiển thị kết quả
+            resultDiv.classList.add('show');
+        }
+
+        function downloadQR() {
+            const canvas = document.querySelector('#qrcode canvas');
+            if (!canvas) {
+                alert('Vui lòng tạo mã QR trước!');
+                return;
+            }
+
+            // Tạo canvas mới để thêm text
+            const finalCanvas = document.createElement('canvas');
+            const ctx = finalCanvas.getContext('2d');
+            const text = document.getElementById('qrTextDisplay').textContent;
+            
+            // Thiết lập kích thước canvas
+            const padding = 30;
+            const textHeight = 40;
+            finalCanvas.width = canvas.width + (padding * 2);
+            finalCanvas.height = canvas.height + textHeight + (padding * 2);
+            
+            // Vẽ background trắng
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
+            
+            // Vẽ border
+            ctx.strokeStyle = '#e0e0e0';
+            ctx.lineWidth = 4;
+            ctx.strokeRect(2, 2, finalCanvas.width - 4, finalCanvas.height - 4);
+            
+            // Vẽ QR code
+            ctx.drawImage(canvas, padding, padding);
+            
+            // Vẽ text bên dưới
+            ctx.fillStyle = '#000000';
+            ctx.font = 'bold 14px Courier New';
+            ctx.textAlign = 'center';
+            ctx.fillText(text, finalCanvas.width / 2, canvas.height + padding + 28);
+            
+            // Download
+            const url = finalCanvas.toDataURL('image/png');
+            const link = document.createElement('a');
+            link.download = 'qrcode.png';
+            link.href = url;
+            link.click();
+        }
+
+        // Tạo QR code mặc định khi tải trang
+        window.onload = function() {
+            generateQR();
+        };
+    </script>
+</body>
+</html>
