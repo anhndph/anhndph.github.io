@@ -219,29 +219,28 @@
             const ctx = finalCanvas.getContext('2d');
             const text = document.getElementById('qrTextDisplay').textContent;
             
-            // Thiết lập kích thước canvas
-            const padding = 30;
-            const textHeight = 40;
-            finalCanvas.width = canvas.width + (padding * 2);
-            finalCanvas.height = canvas.height + textHeight + (padding * 2);
+            // Thiết lập kích thước canvas với padding
+            const qrSize = canvas.width;
+            const padding = 30; // Khoảng trắng xung quanh
+            const textHeight = 40; // Chiều cao cho text
+            const totalWidth = qrSize + (padding * 2);
+            const totalHeight = qrSize + textHeight + (padding * 2);
             
-            // Vẽ background trắng
-            ctx.fillStyle = '#ffffff';
+            finalCanvas.width = totalWidth;
+            finalCanvas.height = totalHeight;
+            
+            // Vẽ background trắng/xám nhạt
+            ctx.fillStyle = '#e8e8e8';
             ctx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
             
-            // Vẽ border
-            ctx.strokeStyle = '#e0e0e0';
-            ctx.lineWidth = 4;
-            ctx.strokeRect(2, 2, finalCanvas.width - 4, finalCanvas.height - 4);
-            
-            // Vẽ QR code
+            // Vẽ QR code (có padding)
             ctx.drawImage(canvas, padding, padding);
             
-            // Vẽ text bên dưới
+            // Vẽ text bên dưới (to hơn)
             ctx.fillStyle = '#000000';
-            ctx.font = 'bold 14px Courier New';
+            ctx.font = 'bold 21px Courier New, monospace';
             ctx.textAlign = 'center';
-            ctx.fillText(text, finalCanvas.width / 2, canvas.height + padding + 28);
+            ctx.fillText(text, totalWidth / 2, qrSize + padding + 30);
             
             // Download
             const url = finalCanvas.toDataURL('image/png');
